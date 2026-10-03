@@ -158,7 +158,7 @@ export const experience = {
       role: 'Suporte Técnico de TI',
       org: 'Instituto Travessia',
       place: 'Recife, PE · Presencial',
-      period: 'nov 2025 — atual',
+      period: 'nov 2025 — mai 2026',
       description:
         'Automação de rotinas com scripts em Batch (CMD), manutenção de servidor e rede local, e suporte a estações Windows — instalação, troubleshooting e apoio ao usuário.',
     },
