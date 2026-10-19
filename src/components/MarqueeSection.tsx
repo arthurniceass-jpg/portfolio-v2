@@ -1,9 +1,10 @@
-import { Fragment, useLayoutEffect, useRef, type ReactNode, type RefObject } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { showcase } from '../content';
 import { tech } from '../data/tech';
 
 const TILE_WIDTH = 420;
 const TILE_GAP = 12; // Tailwind gap-3
+const SPEED = 55; // px por segundo
 
 const shotTiles: ReactNode[] = showcase.map(({ src, alt }) => (
   <img
@@ -25,71 +26,46 @@ const techTiles: ReactNode[] = tech.map(({ label, icon }) => (
 
 interface MarqueeRowProps {
   tiles: ReactNode[];
-  rowRef: RefObject<HTMLDivElement>;
+  reverse?: boolean;
 }
 
-function MarqueeRow({ tiles, rowRef }: MarqueeRowProps) {
-  const tripled = [0, 1, 2].flatMap((copy) =>
-    tiles.map((tile, i) => <Fragment key={`${copy}-${i}`}>{tile}</Fragment>)
-  );
+/**
+ * Carrossel contínuo: a trilha tem 4 cópias dos cards (2 metades idênticas) e anda -50%
+ * em loop, então a emenda nunca aparece. Cada cópia leva `pr-3` para que o -50% caia
+ * exatamente no começo da segunda metade (sem pulo). Para ao passar o mouse.
+ */
+function MarqueeRow({ tiles, reverse = false }: MarqueeRowProps) {
+  // largura de uma metade (2 cópias) -> duração para manter a mesma velocidade em px/s
+  const halfWidth = tiles.length * 2 * (TILE_WIDTH + TILE_GAP);
+  const duration = `${Math.round(halfWidth / SPEED)}s`;
 
   return (
-    <div
-      ref={rowRef}
-      className="flex w-max gap-3"
-      // Start on the middle copy so the row has tiles to spare on both sides
-      // whichever direction it drifts.
-      style={{ marginLeft: -tiles.length * (TILE_WIDTH + TILE_GAP), willChange: 'transform' }}
-    >
-      {tripled}
+    <div className="marquee">
+      <div
+        className={`marquee-track flex w-max ${reverse ? 'marquee-reverse' : ''}`}
+        style={{ animationDuration: duration }}
+      >
+        {[0, 1, 2, 3].map((copy) => (
+          <div key={copy} className="flex shrink-0 gap-3 pr-3" aria-hidden={copy > 0 ? true : undefined}>
+            {tiles.map((tile, i) => (
+              <Fragment key={`${copy}-${i}`}>{tile}</Fragment>
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
 export default function MarqueeSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const row1Ref = useRef<HTMLDivElement>(null);
-  const row2Ref = useRef<HTMLDivElement>(null);
-
-  useLayoutEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    let frame = 0;
-
-    const update = () => {
-      frame = 0;
-      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-      const offset = (window.scrollY - sectionTop + window.innerHeight) * 0.3;
-
-      if (row1Ref.current) row1Ref.current.style.transform = `translateX(${offset - 200}px)`;
-      if (row2Ref.current) row2Ref.current.style.transform = `translateX(${-(offset - 200)}px)`;
-    };
-
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      cancelAnimationFrame(frame);
-    };
-  }, []);
-
   return (
     <section
-      ref={sectionRef}
-      className="overflow-hidden pb-10 pt-24 sm:pt-32 md:pt-40"
+      className="marquee-section overflow-hidden pb-10 pt-24 sm:pt-32 md:pt-40"
       style={{ background: '#0C0C0C' }}
     >
       <div className="flex flex-col gap-3">
-        <MarqueeRow tiles={shotTiles} rowRef={row1Ref} />
-        <MarqueeRow tiles={techTiles} rowRef={row2Ref} />
+        <MarqueeRow tiles={shotTiles} />
+        <MarqueeRow tiles={techTiles} reverse />
       </div>
     </section>
   );

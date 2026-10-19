@@ -1,28 +1,19 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion';
 import FadeIn from './FadeIn';
 import LiveProjectButton from './LiveProjectButton';
 import { projects, type Project } from '../content';
 
-const IMAGE_RADIUS = 'rounded-[40px] sm:rounded-[50px] md:rounded-[60px]';
+const CARD_RADIUS = 'rounded-[40px] sm:rounded-[50px] md:rounded-[60px]';
 
-interface ProjectCardProps {
-  project: Project;
-  index: number;
-  total: number;
-  progress: MotionValue<number>;
-}
-
-function ProjectCard({ project, index, total, progress }: ProjectCardProps) {
-  const targetScale = 1 - (total - 1 - index) * 0.03;
-  const scale = useTransform(progress, [index / total, 1], [1, targetScale]);
-  const [topLeft, bottomLeft, right] = project.images;
-
+/**
+ * Cada projeto é um cartão inteiro, um abaixo do outro (sem empilhar/cobrir).
+ * Os prints aparecem completos (object-contain): nada é cortado, dá pra ler a tela toda.
+ */
+function ProjectCard({ project }: { project: Project }) {
   return (
-    <div className="sticky top-24 h-[85vh] md:top-32">
-      <motion.article
-        className={`relative border-2 border-[#D7E2EA] p-4 sm:p-6 md:p-8 ${IMAGE_RADIUS}`}
-        style={{ background: '#0C0C0C', scale, top: index * 28, transformOrigin: 'top' }}
+    <FadeIn>
+      <article
+        className={`relative border-2 border-[#D7E2EA] p-4 sm:p-6 md:p-8 ${CARD_RADIUS}`}
+        style={{ background: '#0C0C0C' }}
       >
         <div className="mb-4 flex flex-wrap items-center gap-x-8 gap-y-4 sm:mb-6 md:mb-8">
           <div className="flex items-center gap-4 sm:gap-6 md:gap-8">
@@ -58,50 +49,24 @@ function ProjectCard({ project, index, total, progress }: ProjectCardProps) {
           )}
         </div>
 
-        <div className="grid grid-cols-[40fr_60fr] gap-3 sm:gap-4">
-          <div className="flex flex-col gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-3">
+          {project.images.map((image) => (
             <img
-              src={topLeft.src}
-              alt={topLeft.alt}
+              key={image.src}
+              src={image.src}
+              alt={image.alt}
               loading="lazy"
               draggable={false}
-              className={`w-full bg-white/5 object-cover ${IMAGE_RADIUS}`}
-              style={{ height: 'clamp(130px, 16vw, 230px)', objectPosition: topLeft.position }}
+              className="aspect-[16/10] w-full rounded-2xl border border-white/10 bg-white/5 object-contain sm:rounded-3xl"
             />
-            <img
-              src={bottomLeft.src}
-              alt={bottomLeft.alt}
-              loading="lazy"
-              draggable={false}
-              className={`w-full bg-white/5 object-cover ${IMAGE_RADIUS}`}
-              style={{ height: 'clamp(160px, 22vw, 340px)', objectPosition: bottomLeft.position }}
-            />
-          </div>
-          {/* Absolutely positioned so the tall image fills the row set by the left column
-              instead of stretching it to the picture's own aspect ratio. */}
-          <div className="relative">
-            <img
-              src={right.src}
-              alt={right.alt}
-              loading="lazy"
-              draggable={false}
-              className={`absolute inset-0 h-full w-full bg-white/5 object-cover ${IMAGE_RADIUS}`}
-              style={{ objectPosition: right.position }}
-            />
-          </div>
+          ))}
         </div>
-      </motion.article>
-    </div>
+      </article>
+    </FadeIn>
   );
 }
 
 export default function ProjectsSection() {
-  const container = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: container,
-    offset: ['start start', 'end end'],
-  });
-
   return (
     <section
       id="projetos"
@@ -117,15 +82,9 @@ export default function ProjectsSection() {
         </h2>
       </FadeIn>
 
-      <div ref={container} className="mx-auto max-w-[1440px]">
-        {projects.items.map((project, index) => (
-          <ProjectCard
-            key={project.number}
-            project={project}
-            index={index}
-            total={projects.items.length}
-            progress={scrollYProgress}
-          />
+      <div className="mx-auto flex max-w-[1440px] flex-col gap-8 md:gap-12">
+        {projects.items.map((project) => (
+          <ProjectCard key={project.number} project={project} />
         ))}
       </div>
     </section>

@@ -48,8 +48,10 @@ export default function HeroSection() {
       </div>
 
       {/* Centering lives on this plain wrapper: FadeIn and Magnet both write an inline
-          transform, which would otherwise override the -translate-x-1/2 class. */}
-      <div className="absolute left-1/2 top-1/2 z-10 w-[260px] -translate-x-1/2 -translate-y-1/2 sm:bottom-0 sm:top-auto sm:w-[360px] sm:translate-y-0 md:w-[440px] lg:w-[520px]">
+          transform, which would otherwise override the -translate-x-1/2 class.
+          A foto fica centrada (horizontal e vertical) no espaço abaixo do título, inteira;
+          a largura também respeita a altura da tela (vh) para nunca invadir o título. */}
+      <div className="absolute left-1/2 top-[57%] z-10 w-[min(260px,36vh)] -translate-x-1/2 -translate-y-1/2 sm:w-[min(360px,44vh)] md:w-[min(440px,50vh)] lg:w-[min(520px,52vh)]">
         <FadeIn delay={0.6} y={30}>
           <Magnet
             padding={150}
@@ -58,9 +60,7 @@ export default function HeroSection() {
             inactiveTransition="transform 0.6s ease-in-out"
             wrapperClassName="relative block w-full"
           >
-            {/* Photo, not a cut-out: a rounded frame on mobile, an arch that sinks into the
-                page background on larger screens. */}
-            <div className="relative overflow-hidden rounded-[40px] border border-white/10 sm:rounded-b-none sm:rounded-t-[60px] sm:border-b-0">
+            <div className="relative overflow-hidden rounded-[40px] border border-white/10 sm:rounded-[60px]">
               <picture>
                 <source srcSet={hero.photo.webp} type="image/webp" />
                 <img
@@ -70,10 +70,6 @@ export default function HeroSection() {
                   className="block aspect-square h-auto w-full select-none object-cover"
                 />
               </picture>
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-2/5 bg-gradient-to-t from-[#0C0C0C] via-[#0C0C0C]/60 to-transparent sm:block"
-              />
             </div>
           </Magnet>
         </FadeIn>
