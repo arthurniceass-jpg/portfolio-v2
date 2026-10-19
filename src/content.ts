@@ -34,18 +34,19 @@ export const about = {
   ],
 };
 
-// Primeira fileira do marquee: prints reais dos projetos (a segunda é a stack, em data/tech.ts).
+// Primeira fileira do marquee (carrossel): só os 3 projetos em destaque, alternando as telas.
+// A segunda fileira é a stack, em data/tech.ts.
 export const showcase = [
   { src: '/img/work/tile-01.webp', alt: 'Nutri Lab Brasil — página inicial' },
   { src: '/img/work/tile-02.webp', alt: 'Super Doc Robô — tela de login' },
-  { src: '/img/work/tile-03.webp', alt: 'Nutri Lab Brasil — catálogo' },
-  { src: '/img/work/tile-04.webp', alt: 'Super Doc Robô — pasta pronta para envio' },
+  { src: '/img/work/tile-translog-login.webp', alt: 'TransLog — tela de login' },
+  { src: '/img/work/tile-03.webp', alt: 'Nutri Lab Brasil — catálogo com filtros' },
+  { src: '/img/work/tile-translog-dashboard.webp', alt: 'TransLog — dashboard de indicadores' },
   { src: '/img/work/tile-05.webp', alt: 'Nutri Lab Brasil — página de produto' },
-  { src: '/img/work/tile-06.webp', alt: 'Super Doc Robô — pasta para revisar' },
+  { src: '/img/work/tile-translog-veiculos.webp', alt: 'TransLog — veículos' },
+  { src: '/img/work/tile-nutrilab-painel.webp', alt: 'Nutri Lab Brasil — painel administrativo' },
+  { src: '/img/work/tile-translog-motoristas.webp', alt: 'TransLog — motoristas' },
   { src: '/img/work/tile-07.webp', alt: 'Nutri Lab Brasil — tema claro' },
-  { src: '/img/work/tile-08.webp', alt: 'Super Doc Robô — pasta que não deve ser enviada' },
-  { src: '/img/work/tile-09.webp', alt: 'Nutri Lab Brasil — linha de produtos' },
-  { src: '/img/work/tile-10.webp', alt: 'Super Doc Robô — painel de análise' },
 ];
 
 export const services = {
